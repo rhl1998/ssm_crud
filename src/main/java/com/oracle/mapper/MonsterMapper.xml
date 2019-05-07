@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oracle.mapper.MonsterMapper">
+  <resultMap type="Monster"  id="BaseResultMap" >
+    <id column="MONSTER_ID" jdbcType="INTEGER" property="monsterId" />
+    <result column="MONSTERNAME" jdbcType="VARCHAR" property="monstername" />
+    <result column="EMAIL" jdbcType="VARCHAR" property="email" />
+    <result column="BRITHDAY" jdbcType="DATE" property="brithday" />
+    <result column="ENTRYDAY" jdbcType="DATE" property="entryday" />
+    <result column="SCHOOL_FK" jdbcType="INTEGER" property="schoolFk" />
+  </resultMap>
+   <resultMap type="SubMonster"  id="SubMonsterResultMap" >
+    <id column="MONSTER_ID" jdbcType="INTEGER" property="monsterId" />
+    <result column="MONSTERNAME" jdbcType="VARCHAR" property="monstername" />
+    <result column="EMAIL" jdbcType="VARCHAR" property="email" />
+    <result column="BRITHDAY" jdbcType="DATE" property="brithday" />
+    <result column="ENTRYDAY" jdbcType="DATE" property="entryday" />
+    <result column="SCHOOL_FK" jdbcType="INTEGER" property="schoolFk" />
+    <association property="school" javaType="School">
+    	<id property="schoolId" column="school_id"/>
+    	<result property="name" column="name"/>
+    	<result property="address" column="address"/>
+    </association>
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from monster
+    where MONSTER_ID = #{monsterId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.oracle.bean.SubMonster">
+    insert into monster (MONSTER_ID, MONSTERNAME, EMAIL, 
+      BRITHDAY, ENTRYDAY, SCHOOL_FK
+      )
+    values (#{monsterId,jdbcType=INTEGER}, #{monstername,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+      #{brithday,jdbcType=DATE}, #{entryday,jdbcType=DATE}, #{school.schoolId,jdbcType=INTEGER} 
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.oracle.bean.SubMonster">
+    update monster
+    set monstername= #{monstername,jdbcType=VARCHAR},
+      EMAIL = #{email,jdbcType=VARCHAR},
+      BRITHDAY = #{brithday,jdbcType=DATE},
+      ENTRYDAY = #{entryday,jdbcType=DATE},
+      SCHOOL_FK = #{school.schoolId,jdbcType=INTEGER}
+    where MONSTER_ID = #{monsterId,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="SubMonsterResultMap">
+    select * from monster where monster_id = #{monsterId}
+  </select>
+  <select id="selectAll" resultMap="SubMonsterResultMap">
+    select * from monster,school where monster.school_fk= school.school_id
+  </select>
+</mapper>
